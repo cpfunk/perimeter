@@ -1,0 +1,62 @@
+/home/cpfunk/perimeter_verilog/seven_seg_decoder.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/seven_seg_decoder.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module seven_seg_decoder
+
+Top level modules:
+	seven_seg_decoder
+
+} {} {}} /home/cpfunk/perimeter_verilog/clickComparatorAndTrueFalseCounter.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/clickComparatorAndTrueFalseCounter.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module clickComparatorAndTrueFalseCounter
+
+Top level modules:
+	clickComparatorAndTrueFalseCounter
+
+} {} {}} /home/cpfunk/perimeter_verilog/perimeter.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/perimeter.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module perimeter
+
+Top level modules:
+	perimeter
+
+} {} {}} /home/cpfunk/perimeter_verilog/decoder6to64.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/decoder6to64.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module decoder6to64
+
+Top level modules:
+	decoder6to64
+
+} {} {}} /home/cpfunk/perimeter_verilog/score_mux_4digit.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/score_mux_4digit.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module score_mux_4digit
+
+Top level modules:
+	score_mux_4digit
+
+} {} {}} /home/cpfunk/perimeter_verilog/clkDivBy16384.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/clkDivBy16384.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module clkDivBy16384
+
+Top level modules:
+	clkDivBy16384
+
+} {} {}} /home/cpfunk/perimeter_verilog/pseudoRandDecoderController_6b.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/pseudoRandDecoderController_6b.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module pseudoRandDecoderController_6b
+-- Compiling module stateController_1b
+-- Compiling module genNextRand_16b
+-- Compiling module demux_16b
+-- Compiling module minMaxScalarMux_16b
+-- Compiling module scaleToMinMaxRange_16b
+
+Top level modules:
+	pseudoRandDecoderController_6b
+
+} {} {}} /home/cpfunk/perimeter_verilog/binary_to_bcd_4digit.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/binary_to_bcd_4digit.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module binary_to_bcd_4digit
+
+Top level modules:
+	binary_to_bcd_4digit
+
+} {} {}}

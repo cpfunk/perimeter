@@ -1,0 +1,15 @@
+/home/cpfunk/perimeter_verilog/testbenches/clickComparatorAndTrueFalseCounter_tb.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/testbenches/clickComparatorAndTrueFalseCounter_tb.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module clickComparatorAndTrueFalseCounter_tb
+
+Top level modules:
+	clickComparatorAndTrueFalseCounter_tb
+
+} {} {}} /home/cpfunk/perimeter_verilog/clickComparatorAndTrueFalseCounter.v {1 {vlog -work work -vopt -stats=none /home/cpfunk/perimeter_verilog/clickComparatorAndTrueFalseCounter.v
+QuestaSim-64 vlog 2025.1_2 Compiler 2025.04 Apr  7 2025
+-- Compiling module clickComparatorAndTrueFalseCounter
+
+Top level modules:
+	clickComparatorAndTrueFalseCounter
+
+} {} {}}
