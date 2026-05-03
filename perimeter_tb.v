@@ -1,13 +1,12 @@
-`timescale 1us / 1ns
+`timescale 1ns / 1ps
 
 module perimeter_tb;
     // uut paramters
-    reg clk_16MHz;
+    reg clk;
     reg clk_mux_s;
     reg _start_test;
     reg _clicker;
     reg true_false_sel_switch;
-    reg [0:15] seed;
     reg [0:15] counter;
 
     wire clk_1kHz_ext;
@@ -47,26 +46,37 @@ module perimeter_tb;
     wire G_ones;
 
     // testbench parameters
+    reg [0:13] initial_false_clicks;
+    reg [0:13] initial_true_clicks;
+    reg [0:15] test_counter;
+    reg [0:15] test_counter_at_true;
+    reg [0:2] end_test_3;
+    wire [0:13] false_clicks;
+    wire [0:13] true_clicks;
     reg [0:3] testcase;
-    wire random_buttonpress_event_start;
-    wire random_buttonpress_event_end;
     wire [0:3] ones, tens, hundreds, thousands;
+    wire clk_1kHz_div;
+    wire rand_led_enable;
+    wire [0:15] randDelayTime;
+
+    wire true_click_detect_active;
 
     integer random_buttonpress_length;
 
     integer max_between_press_interval = 100; //FIXME
     integer max_button_press_time = 10; // clock cycles
 
-    integer clockfreq = 16_000_000;
+    integer clockfreq = 10_000_000;
     integer s_to_ns = 1_000_000_000;
     integer ms_to_ns = 1_000_000;
     integer half_clk_cycle;
 
-    integer max_true_click_time;
-    integer max_between_led_blink_time;
-    integer min_led_blink_time;
+    integer maxVal_delay;
+    integer minVal_delay;
 
-    time start_time_true_signal, duration_true_signal, led_delay;
+    reg d1;
+    reg d2;
+    reg d3;
     
     // these reverse seven segment decoders
     // this enables the output of the seven segment display decoder to be easily observed 
@@ -115,13 +125,14 @@ module perimeter_tb;
     );
 
     perimeter uut (
-        .clk_16MHz(clk_16MHz),
+        .clk_16MHz(0),
         .clk_1kHz_ext(clk_1kHz_ext),
         .clk_mux_s(clk_mux_s),
         ._start_test(_start_test),
         ._clicker(_clicker),
         .true_false_display_sel_switch(true_false_sel_switch),
-        .seed(seed),
+        .seed(16'hX),
+        .seed_mux_s(0),
         .rand_led_onehot(rand_led_onehot),
         .A_thousands(A_thousands), .B_thousands(B_thousands), .C_thousands(C_thousands),
         .D_thousands(D_thousands), .E_thousands(E_thousands), .F_thousands(F_thousands), .G_thousands(G_thousands),
@@ -134,90 +145,163 @@ module perimeter_tb;
     initial begin
         testcase                = 1;
         counter                 = 0;
-        clk_16MHz               = 0;
+        clk               = 0;
         // clk_1kHz_ext            = // simulation would run too slow with 1kHz clock
         clk_mux_s               = 1; // bypass clock divider by setting clock mux to 1
         _start_test             = 1'b0;
-        _clicker               = 1;
-        true_false_sel_switch   = 1;
-        seed                    = $random;
-        $display("seed = %d", seed);
+        _clicker                = 1;
+        true_false_sel_switch   = 0;
+        initial_false_clicks    = 0;
+        initial_true_clicks     = 0;
+        test_counter            = 0;
+        end_test_3              = 3'b001;
+        test_counter_at_true    = ($random) % (16'd5000);
 
-        max_true_click_time = ms_to_ns * uut.max_true_time;
-        max_between_led_blink_time = ms_to_ns * uut.maxVal_delay;
-        min_led_blink_time = ms_to_ns * uut.minVal_delay;
+        maxVal_delay = uut.maxVal_delay;
+        minVal_delay = uut.minVal_delay;
         half_clk_cycle = s_to_ns /(2 * clockfreq);
         random_buttonpress_length = $random % (max_button_press_time + 1);
+        d1 = 0;
+        d2 = 0;
+        d3 = 0;
     end
 
-
-    assign clk_1kHz_ext = clk_16MHz; // run on faster clock for testbenching purposes
+    assign clk_1kHz_ext = clk; // run on faster clock for testbenching purposes
+    assign true_click_detect_active = uut.comparator_inst.true_click_detect_active;
+    assign false_clicks = uut.false_clicks;
+    assign true_clicks = uut.true_clicks;
+    assign clk_1kHz_div = uut.clk_1kHz_div;
+    assign rand_led_enable = uut.rand_led_enable;
+    assign randDelayTime = uut.rand_controller_inst.randDelayTime_w;
     // random button presses -> button should go low and then be held low for some random amount of time
-    assign random_buttonpress_event_start = (counter >= ($random % (max_between_press_interval + 1)));
-    assign random_buttonpress_event_end = (($random % (max_between_press_interval + 1) + random_buttonpress_length) >= counter);
+    // assign random_buttonpress_event_start = (counter >= ($random % (max_between_press_interval + 1)));
+    // assign random_buttonpress_event_end = (($random % (max_between_press_interval + 1) + random_buttonpress_length) >= counter);
 
     // triggering of synchronous testbench signals
-    always #(half_clk_cycle) clk_16MHz = ~clk_16MHz;
+    always #(half_clk_cycle) clk = ~clk;
 
-        always @(posedge clk_16MHz) begin
+    displayStartTest dt1 (.test(1), .display(d1));
+    displayStartTest dt2 (.test(2), .display(d2));
+    displayStartTest dt3 (.test(3), .display(d3));
+    always @(posedge clk) begin
 
         case(testcase)
-            4'd1: // Test Case #1
+            default: // Test Case #1
             begin
-                // patient presses & holds clicker when false
-                // patient presses & holds clicker while true
+                d1 <= 1;
+                _start_test <= 1'b1;
 
-                if () begin
+                // patient presses & holds clicker when false
+                if (test_counter == 0) begin
+                    initial_false_clicks <= false_clicks;
+                    initial_true_clicks <= true_clicks;
+                end
+
+                if (~true_click_detect_active) begin
+                    test_counter <= test_counter + 1;
+                end
+                
+                if (test_counter >= ($random) % (16'd5000) && ~true_click_detect_active) begin
+                    _clicker <= 0;
+                end
+                else if (false_clicks == initial_false_clicks + 1 && initial_true_clicks == true_clicks && true_click_detect_active) begin
+                    $display("Test #1 passed");
                     //advance testcase
-                    testcase <= testcase + 1;
+                    testcase <= 2;
+                    test_counter <= 0;
+                    _clicker <= 1;
+                end
+                else if (true_click_detect_active && test_counter != 0) begin
+                    $display("Test #1 failed");
+                    $stop;
                 end
             end
             4'd2: // Test Case #2
             begin
-                // patient presses & holds clicker when false
-                // patient presses & holds clicker while true
+                d2 <= 1;
 
-                if () begin
+                // patient presses & holds clicker while true
+                if (test_counter == 0) begin
+                    initial_false_clicks <= false_clicks;
+                    initial_true_clicks <= true_clicks;
+                end
+
+                if (true_click_detect_active) begin
+                    test_counter <= test_counter + 1;
+                end
+                
+                if (test_counter >= ($random) % (16'd5000) && true_click_detect_active) begin
+                    _clicker <= 0;
+                end
+                else if (false_clicks == initial_false_clicks && initial_true_clicks + 1 == true_clicks && test_counter >= 16'd10_000) begin
+                    $display("Test #2 passed");
                     //advance testcase
-                    testcase <= testcase + 1;
+                    testcase <= 3;
+                    test_counter <= 0;
+                    _clicker <= 1;
+                end
+                else if (test_counter >= 16'd10_000) begin
+                    $display("Test #2 failed");
+                    $stop;
                 end
             end
             4'd3: // Test Case #3
             begin
-                // patient presses & holds clicker when false
-                // patient presses & holds clicker while true
+                d3 <= 1;
 
-                if () begin
+                if (test_counter == 0) begin
+                    initial_false_clicks <= false_clicks;
+                    initial_true_clicks <= true_clicks;
+                end
+
+                if (true_click_detect_active || ~true_click_detect_active && test_counter != 0) begin
+                    test_counter <= test_counter + 1;
+                end
+
+                if (test_counter >= test_counter_at_true % 16'd2500 && true_click_detect_active) begin
+                    _clicker <= 0;
+                end
+                else if (~_clicker) begin
+                    _clicker <= 1;
+                end
+                else if (test_counter >= test_counter_at_true && ~true_click_detect_active) begin
+                    _clicker <= 0;
+                    end_test_3 <= end_test_3 << 1;
+                end
+                
+                if (false_clicks == initial_false_clicks + 1 && initial_true_clicks + 1 == true_clicks) begin
+                    $display("Test #3 passed");
                     //advance testcase
-                    testcase <= testcase + 1;
+                    testcase <= 4;
+                    test_counter <= 0;
+                    _clicker <= 1;
+                end
+                else if (end_test_3 & 2'b100 && test_counter != 0) begin
+                    $display("Test #3 failed");
+                    $stop;
                 end
             end
             4'd4: // Test Case #4
             begin
-                if () begin
-                    //advance testcase
-                    testcase <= testcase + 1;
+                _clicker <= ~_clicker;
+
+                if (false_clicks != true_clicks) begin
+                    $display("Decoder Output: %d %d %d %d", thousands, hundreds, tens, ones);
+                    true_false_sel_switch <= 1;
                 end
-            end
-            4'd5: // Test Case #5
-            begin
-                if () begin
-                    //advance testcase
-                    testcase <= testcase + 1;
-                end
-            end
-            4'd6: // Test Case #6
-            begin
-                if () begin
-                    //advance testcase
+
+                if (true_false_sel_switch) begin
+
+                    //display decoder output and true and false clicks
+                    $display("### All tests Passed ###");
+                    $display("False clicks: %d | True clicks: %d", uut.false_clicks, uut.true_clicks);
                     testcase <= 1;
+                    _start_test <= 0;
+                    true_false_sel_switch <= 0;
+                    $stop; //FIXME
                 end
             end
         endcase
-
-        //display decoder output and true and false clicks
-        $display("False clicks: %d | True clicks: %d", uut.false_clicks, uut.true_clicks);
-        $display("Decoder Output: %d %d %d %d", thousands, hundreds, tens, ones);
     end
 
 endmodule
@@ -243,4 +327,20 @@ module reverseSevenSegDecoder(
         endcase
     end
     
+endmodule
+
+module displayStartTest(input [0:16] test, input display);
+    reg displayed;
+
+    initial begin
+        displayed = 0;
+    end
+
+    always @(*) begin
+        if (display && !displayed) begin
+            $display("Starting test case #%d", test);
+            displayed <= 1;
+        end
+    end
+
 endmodule

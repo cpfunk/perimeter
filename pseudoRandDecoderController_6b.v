@@ -8,6 +8,7 @@ module pseudoRandDecoderController_6b(
     maxVal_delay,
     minVal_delay,
     ledflashTime,
+    input [0:4] bitShift_delay,
     input rst
 );
     wire trigger_w, state_w;
@@ -17,11 +18,13 @@ module pseudoRandDecoderController_6b(
     maxVal_w,
     randNum_w,
     to64bitEncoder_w;
+    wire [0:4] bitShift_w;
 
     localparam multiplier   = 16'd25173,
     increment               = 16'd13849,
     maxVal_num              = 16'd64,
-    minVal_num              = 16'd0;
+    minVal_num              = 16'd0,
+    bitShift_num            = 5'd10;
 
     // for debugging purposes: Note: will assert initially since the output of the demux is ~16'h0
     always @(*) begin
@@ -52,10 +55,13 @@ module pseudoRandDecoderController_6b(
     minMaxScalarMux_16b scalarMux(
         .maxVal_out(maxVal_w),
         .minVal_out(minVal_w),
+        .bitShift_out(bitShift_w),
         .maxVal_0(maxVal_num),
         .minVal_0(minVal_num),
+        .bitShift_0(bitShift_num),
         .maxVal_1(maxVal_delay),
         .minVal_1(minVal_delay),
+        .bitShift_1(bitShift_delay),
         .s(state_w)
     );
 
@@ -63,7 +69,8 @@ module pseudoRandDecoderController_6b(
         .outputNum(scalarModule_demux_w),
         .inputNum(randNum_w),
         .maxVal(maxVal_w),
-        .minVal(minVal_w)
+        .minVal(minVal_w),
+        .bitShift(bitShift_w)
     );
 
     demux_16b numDemux(
@@ -85,9 +92,9 @@ module stateController_1b(
     output reg currentState,
     output reg stateChangedTrigger,
     input [0:15] timeInState0,
-    timeInState1,
+    input [0:15] timeInState1,
     input clk,
-    rst
+    input rst
 );
     reg [0:15] time_16b;
     wire [0:15] totTime_w,
@@ -139,18 +146,18 @@ endmodule
 module genNextRand_16b(
     output reg  [0:15] randNum,
     input [0:15] multiplier,
-    increment,
-    seed,
+    input [0:15] increment,
+    input [0:15] seed,
     input clk,
-    trigger,
-    rst
+    input trigger,
+    input rst
 );
     reg [0:15] randNum_prev;
 
     always @(posedge clk or posedge rst) begin
             if (rst) begin
-                randNum = seed;
-                randNum_prev = seed;
+                randNum <= seed;
+                randNum_prev <= seed;
             end
 
             if (trigger) begin // output new random number on positive and negative edges
@@ -164,10 +171,10 @@ endmodule
 
 module demux_16b(
     output reg [0:15] y_0,
-    y_1,
-    input [0:15] x,
-    input s,
-    rst
+    output reg [0:15] y_1,
+    input [0:15]      x,
+    input             s,
+    input             rst
 );
     // output should hold its previous value if not selected
     always @(*) begin
@@ -186,31 +193,45 @@ endmodule
 
 module minMaxScalarMux_16b(
     output [0:15] maxVal_out,
-    minVal_out,
+    output [0:15] minVal_out,
+    output [0:4] bitShift_out,
     input [0:15] maxVal_0,
-    minVal_0,
-    maxVal_1,
-    minVal_1,
+    input [0:15] minVal_0,
+    input [0:15] maxVal_1,
+    input [0:15] minVal_1,
+    input [0:4] bitShift_0,
+    input [0:4] bitShift_1,
     input s
 );
     assign maxVal_out = s ? maxVal_1 : maxVal_0;
     assign minVal_out = s ? minVal_1 : minVal_0;
+    assign bitShift_out = s ? bitShift_1 : bitShift_0;
 
 endmodule
 
+// realize: this module can (at maximum) scale numbers between
 module scaleToMinMaxRange_16b(
     output [0:15] outputNum, 
-    input [0:15] inputNum, 
-    maxVal, 
-    minVal
+    input [0:15] inputNum,
+    input [0:15] maxVal, 
+    input [0:15] minVal,
+    input [0:4] bitShift
 );
+    wire [0:15] Num1, Num2;
     // for debugging purposes
     always @(*) begin
         if (minVal >= maxVal) begin
             $display("scaleToMinMaxRange_16b ERROR: minVal >= maxVal: minVal = %d; maxVal = %d", maxVal, minVal);
         end
+
+        if(minVal > outputNum &&  outputNum > maxVal) begin
+            $display("scaleToMinMaxRange_16b ERROR: output not in range: output = %d,  minVal = %d; maxVal = %d", outputNum, maxVal, minVal);
+        end
     end
 
-    assign outputNum = inputNum % (maxVal - minVal + 1) + minVal;
+    assign Num1 = (inputNum >> bitShift) + minVal;
+    assign Num2 = (inputNum >> (bitShift - 1)) + minVal;
+
+    assign outputNum = (maxVal >= Num2) ? Num2 : Num1;
 
 endmodule

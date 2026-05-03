@@ -6,6 +6,6 @@ module decoder6to64(
     input _en
 );
 
-    assign Y = (_en) ? 0 : (64'h1 << 64'd63) >> X;
+    assign Y = (_en) ? 0 : 64'h1 << X;
 
 endmodule

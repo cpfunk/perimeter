@@ -8,6 +8,7 @@ module perimeter (
     input             true_false_display_sel_switch,
     input             _start_test,
     input      [0:15] seed,
+    input             seed_mux_s,
     output     [0:63] rand_led_onehot,
     output            A_thousands,
     output            B_thousands,
@@ -52,9 +53,11 @@ module perimeter (
     wire [5:0] rand_led_index;
     wire rand_led_enable;
     wire rst;
+    wire [0:15] seed_w;
 
     localparam [0:15] maxVal_delay     = 16'd20000;    // 20000 clock cycles = 20 seconds when running on 1kHz clock
     localparam [0:15] minVal_delay     = 16'd7000;     // 7000 clock cycles = 7 seconds when running on 1kHz clock
+    localparam [0:15] bitShift_delay   = 5'd3;
     localparam [0:15] ledflashTime     = 16'd1000;     // 1000 clock cycles = 1 second when running on 1kHz clock
     localparam [0:13] max_true_time    = 14'd5000 + ledflashTime[0:13];     // 5000 clock cycles = 5 seconds when running on 1kHz clock
 
@@ -68,6 +71,8 @@ module perimeter (
     //clock mux
     assign clk_1kHz = (clk_mux_s) ? clk_1kHz_ext : clk_1kHz_div;
 
+    assign seed_w = (seed_mux_s) ? seed : 16'd40267;
+
     //assign reset signal to _start_test signal
     assign rst = ~_start_test;
     
@@ -75,9 +80,10 @@ module perimeter (
         .randOut(rand_led_index),
         ._enOut(rand_led_enable),
         .clk(clk_1kHz),
-        .seed(seed),
+        .seed(seed_w),
         .maxVal_delay(maxVal_delay),
         .minVal_delay(minVal_delay),
+        .bitShift_delay(bitShift_delay),
         .ledflashTime(ledflashTime),
         .rst(rst)
     );
@@ -105,7 +111,7 @@ module perimeter (
         .display_score(display_score)
     );
 
-    binary_to_bcd_4digit bcd_inst (
+    binaryToBCD4digit bcd_inst (
         .binary_score(display_score),
         .thousands(thousands),
         .hundreds(hundreds),
