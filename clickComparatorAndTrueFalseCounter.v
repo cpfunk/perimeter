@@ -35,12 +35,6 @@ module clickComparatorAndTrueFalseCounter (
     end
 
     always @(posedge clk or posedge rst) begin
-
-        // update previous clicker level for negative edge detection
-        _clicker_level_prev <= _clicker;
-        _en_level_prev <= _en;
-        true_click_count_prev <= (rst) ? 14'h0 : true_click_count;
-
         if (rst) begin
             true_click_count <= 0;
             false_click_count <= 0;
@@ -56,10 +50,31 @@ module clickComparatorAndTrueFalseCounter (
                 false_click_count <= false_click_count + 1;
             end
         end
-        
-        // start counting time whenever true_click_detect_active is high
-        counter_14b <= (rst || !true_click_detect_active) ? 0 : counter_14b + 1;
-        
+    end
+
+    // start counting time whenever true_click_detect_active is high
+    always @(posedge clk or posedge rst or posedge !true_click_detect_active) begin
+        if (rst || !true_click_detect_active) begin
+            counter_14b <= 0;
+        end
+        else begin
+            counter_14b <= counter_14b + 1;
+        end
+    end
+
+    // update previous clicker level for negative edge detection
+    always @(posedge clk) begin
+        _clicker_level_prev <= _clicker;
+        _en_level_prev <= _en;
+    end
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            true_click_count_prev <= 14'h0;
+        end
+        else begin
+            true_click_count_prev <= true_click_count;
+        end
     end
 
 endmodule

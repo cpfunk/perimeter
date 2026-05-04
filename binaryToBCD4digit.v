@@ -5,7 +5,7 @@ module binaryToBCD4digit (
     output reg [3:0]  tens,         // 4-bit output for Tens display
     output reg [3:0]  ones          // 4-bit output for Ones display
 );
-    reg [15:0] bcd;
+    reg [27:0] bcd;
     reg [13:0] bin;
     integer i;
 

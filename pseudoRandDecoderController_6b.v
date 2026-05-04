@@ -116,7 +116,7 @@ module stateController_1b(
     assign beforeIsAtEnd0_w = (time_16b == beforetotTime_w);
     assign triggerEvent = (beforeIsAtEnd1_w || beforeIsAtEnd0_w);
 
-    always @(posedge clk or posedge rst) begin
+    always @(posedge clk or posedge rst or posedge isAtEnd0_w) begin
         if (rst || isAtEnd0_w) begin
             time_16b <= 0;
 
@@ -129,7 +129,9 @@ module stateController_1b(
                 currentState <= 0;
             end
         end
+    end
 
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
             stateChangedTrigger <= 0;
         end 
@@ -157,14 +159,19 @@ module genNextRand_16b(
     always @(posedge clk or posedge rst) begin
             if (rst) begin
                 randNum <= seed;
-                randNum_prev <= seed;
             end
-
-            if (trigger) begin // output new random number on positive and negative edges
+            else if (trigger) begin // output new random number on positive and negative edges
                 randNum <= randNum_prev * multiplier + increment; // generate a pseudo random number sequence
             end
+    end
 
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            randNum_prev <= seed;
+        end
+        else begin
             randNum_prev <= randNum; // update previous random number
+        end
     end
 
 endmodule
@@ -182,11 +189,12 @@ module demux_16b(
             y_0 = 0;
             y_1 = ~16'h0;
         end
-
-        case(s)
-            0: y_0 = x;
-            1: y_1 = x;
-        endcase
+        else begin
+            case(s)
+                0: y_0 = x;
+                1: y_1 = x;
+            endcase
+        end
     end
 
 endmodule
