@@ -6,6 +6,7 @@ module pseudoRandDecoderController_6b_tb();
     reg clk;
     reg rst;
     reg [0:15] seed;
+    localparam [0:4] bitShift_delay = 5'd0;
     localparam maxVal_delay = 20, // should be 20000 ms //FIXME
     minVal_delay            = 7, // should be 7000 ms //FIXME
     ledflashTime            = 10; 
@@ -24,6 +25,7 @@ module pseudoRandDecoderController_6b_tb();
         .maxVal_delay(maxVal_delay),
         .minVal_delay(minVal_delay),
         .ledflashTime(ledflashTime),
+        .bitShift_delay(bitShift_delay),
         .rst(rst)
     );
 
@@ -34,8 +36,8 @@ module pseudoRandDecoderController_6b_tb();
     end
 
     always @(*) begin
-        if (randOut > 64) begin
-            $display("ERROR: outside of 0-64 range: randOut = %d", randOut);
+        if (randOut > 63) begin
+            $display("ERROR: outside of 0-63 range: randOut = %d", randOut);
         end
     end
 

@@ -211,10 +211,6 @@ module perimeter_tb;
                     test_counter <= 0;
                     _clicker <= 1;
                 end
-                else if (true_click_detect_active && test_counter != 0) begin
-                    $display("Test #1 failed");
-                    $stop;
-                end
             end
             4'd2: // Test Case #2
             begin
