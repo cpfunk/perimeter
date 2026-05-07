@@ -28,7 +28,7 @@ module pseudoRandDecoderController_6b(
 
     // for debugging purposes: Note: will assert initially since the output of the demux is ~16'h0
     always @(*) begin
-        if (randDelayTime_w > maxVal_delay || minVal_num > randDelayTime_w) begin
+        if (randDelayTime_w > maxVal_delay || minVal_delay > randDelayTime_w) begin
             $display("ERROR: randDelayTime_w outside of %d-%d range: randDelayTime_w = %d", minVal_delay, maxVal_delay, randDelayTime_w);
         end
     end
@@ -225,21 +225,21 @@ module scaleToMinMaxRange_16b(
     input [0:15] minVal,
     input [0:4] bitShift
 );
-    wire [0:15] Num1, Num2;
+    wire [0:15] range_w;
     // for debugging purposes
     always @(*) begin
         if (minVal >= maxVal) begin
             $display("scaleToMinMaxRange_16b ERROR: minVal >= maxVal: minVal = %d; maxVal = %d", maxVal, minVal);
         end
 
-        if(minVal > outputNum &&  outputNum > maxVal) begin
+        if (outputNum < minVal || outputNum > maxVal) begin
             $display("scaleToMinMaxRange_16b ERROR: output not in range: output = %d,  minVal = %d; maxVal = %d", outputNum, maxVal, minVal);
         end
     end
 
-    assign Num1 = (inputNum >> bitShift) + minVal;
-    assign Num2 = (inputNum >> (bitShift - 1)) + minVal;
+    // bitShift is intentionally unused in modulo mode; keep port for compatibility.
+    assign range_w = maxVal - minVal + 1;
 
-    assign outputNum = (maxVal >= Num2) ? Num2 : Num1;
+    assign outputNum = (minVal <= maxVal) ? (minVal + (inputNum % range_w)) : minVal;
 
 endmodule

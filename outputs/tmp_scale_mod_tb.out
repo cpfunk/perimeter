@@ -1,0 +1,458 @@
+#! /usr/bin/vvp
+:ivl_version "12.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 12;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2009.vpi";
+S_0x619926d9b650 .scope package, "$unit" "$unit" 2 1;
+ .timescale 0 0;
+S_0x619926d9c8a0 .scope module, "pseudoRandDecoderController_6b" "pseudoRandDecoderController_6b" 3 3;
+ .timescale -6 -9;
+    .port_info 0 /OUTPUT 6 "randOut";
+    .port_info 1 /OUTPUT 1 "_enOut";
+    .port_info 2 /INPUT 1 "clk";
+    .port_info 3 /INPUT 16 "seed";
+    .port_info 4 /INPUT 16 "maxVal_delay";
+    .port_info 5 /INPUT 16 "minVal_delay";
+    .port_info 6 /INPUT 16 "ledflashTime";
+    .port_info 7 /INPUT 5 "bitShift_delay";
+    .port_info 8 /INPUT 1 "rst";
+P_0x619926d94950 .param/l "bitShift_num" 1 3 27, C4<01010>;
+P_0x619926d94990 .param/l "increment" 1 3 24, C4<0011011000011001>;
+P_0x619926d949d0 .param/l "maxVal_num" 1 3 25, C4<0000000001000000>;
+P_0x619926d94a10 .param/l "minVal_num" 1 3 26, C4<0000000000000000>;
+P_0x619926d94a50 .param/l "multiplier" 1 3 23, C4<0110001001010101>;
+L_0x619926d6c0e0 .functor BUFZ 1, v0x619926dbec90_0, C4<0>, C4<0>, C4<0>;
+v0x619926dbf670_0 .net "_enOut", 0 0, L_0x619926d6c0e0;  1 drivers
+o0x70e477c89768 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x619926dbf750_0 .net "bitShift_delay", 0 4, o0x70e477c89768;  0 drivers
+v0x619926dbf840_0 .net "bitShift_w", 0 4, L_0x619926dd2570;  1 drivers
+o0x70e477c89018 .functor BUFZ 1, C4<z>; HiZ drive
+v0x619926dbf960_0 .net "clk", 0 0, o0x70e477c89018;  0 drivers
+o0x70e477c89be8 .functor BUFZ 16, C4<zzzzzzzzzzzzzzzz>; HiZ drive
+v0x619926dbfa50_0 .net "ledflashTime", 0 15, o0x70e477c89be8;  0 drivers
+o0x70e477c897c8 .functor BUFZ 16, C4<zzzzzzzzzzzzzzzz>; HiZ drive
+v0x619926dbfb40_0 .net "maxVal_delay", 0 15, o0x70e477c897c8;  0 drivers
+v0x619926dbfbe0_0 .net "maxVal_w", 0 15, L_0x619926dd2350;  1 drivers
+o0x70e477c89828 .functor BUFZ 16, C4<zzzzzzzzzzzzzzzz>; HiZ drive
+v0x619926dbfcd0_0 .net "minVal_delay", 0 15, o0x70e477c89828;  0 drivers
+v0x619926dbfd90_0 .net "minVal_w", 0 15, L_0x619926dd2480;  1 drivers
+v0x619926dbfe30_0 .net "randDelayTime_w", 0 15, v0x619926dbc760_0;  1 drivers
+v0x619926dbff40_0 .net "randNum_w", 0 15, v0x619926d6c340_0;  1 drivers
+v0x619926dc0050_0 .net "randOut", 0 5, L_0x619926dd2e20;  1 drivers
+o0x70e477c89108 .functor BUFZ 1, C4<z>; HiZ drive
+v0x619926dc0130_0 .net "rst", 0 0, o0x70e477c89108;  0 drivers
+v0x619926dc01d0_0 .net "scalarModule_demux_w", 0 15, L_0x619926dd2ca0;  1 drivers
+o0x70e477c89138 .functor BUFZ 16, C4<zzzzzzzzzzzzzzzz>; HiZ drive
+v0x619926dc02e0_0 .net "seed", 0 15, o0x70e477c89138;  0 drivers
+v0x619926dc03a0_0 .net "state_w", 0 0, v0x619926dbec90_0;  1 drivers
+v0x619926dc0440_0 .net "to64bitEncoder_w", 0 15, v0x619926dbc680_0;  1 drivers
+v0x619926dc04e0_0 .net "trigger_w", 0 0, v0x619926dbf010_0;  1 drivers
+E_0x619926d878e0 .event anyedge, v0x619926dbc760_0, v0x619926dbdb80_0, v0x619926dbde30_0;
+L_0x619926dd2e20 .part v0x619926dbc680_0, 0, 6;
+S_0x619926d6d830 .scope module, "genNextRand" "genNextRand_16b" 3 36, 3 148 0, S_0x619926d9c8a0;
+ .timescale -6 -9;
+    .port_info 0 /OUTPUT 16 "randNum";
+    .port_info 1 /INPUT 16 "multiplier";
+    .port_info 2 /INPUT 16 "increment";
+    .port_info 3 /INPUT 16 "seed";
+    .port_info 4 /INPUT 1 "clk";
+    .port_info 5 /INPUT 1 "trigger";
+    .port_info 6 /INPUT 1 "rst";
+v0x619926d71ba0_0 .net "clk", 0 0, o0x70e477c89018;  alias, 0 drivers
+L_0x70e477c40060 .functor BUFT 1, C4<0011011000011001>, C4<0>, C4<0>, C4<0>;
+v0x619926d71c70_0 .net "increment", 0 15, L_0x70e477c40060;  1 drivers
+L_0x70e477c40018 .functor BUFT 1, C4<0110001001010101>, C4<0>, C4<0>, C4<0>;
+v0x619926d6c240_0 .net "multiplier", 0 15, L_0x70e477c40018;  1 drivers
+v0x619926d6c340_0 .var "randNum", 0 15;
+v0x619926dbbdd0_0 .var "randNum_prev", 0 15;
+v0x619926dbbf00_0 .net "rst", 0 0, o0x70e477c89108;  alias, 0 drivers
+v0x619926dbbfc0_0 .net "seed", 0 15, o0x70e477c89138;  alias, 0 drivers
+v0x619926dbc0a0_0 .net "trigger", 0 0, v0x619926dbf010_0;  alias, 1 drivers
+E_0x619926d873d0 .event posedge, v0x619926dbbf00_0, v0x619926d71ba0_0;
+S_0x619926dbc240 .scope module, "numDemux" "demux_16b" 3 76, 3 179 0, S_0x619926d9c8a0;
+ .timescale -6 -9;
+    .port_info 0 /OUTPUT 16 "y_0";
+    .port_info 1 /OUTPUT 16 "y_1";
+    .port_info 2 /INPUT 16 "x";
+    .port_info 3 /INPUT 1 "s";
+    .port_info 4 /INPUT 1 "rst";
+v0x619926dbc460_0 .net "rst", 0 0, o0x70e477c89108;  alias, 0 drivers
+v0x619926dbc520_0 .net "s", 0 0, v0x619926dbec90_0;  alias, 1 drivers
+v0x619926dbc5c0_0 .net "x", 0 15, L_0x619926dd2ca0;  alias, 1 drivers
+v0x619926dbc680_0 .var "y_0", 0 15;
+v0x619926dbc760_0 .var "y_1", 0 15;
+E_0x619926d87690 .event anyedge, v0x619926dbbf00_0, v0x619926dbc520_0, v0x619926dbc5c0_0;
+S_0x619926dbc930 .scope module, "scalarModule" "scaleToMinMaxRange_16b" 3 68, 3 221 0, S_0x619926d9c8a0;
+ .timescale -6 -9;
+    .port_info 0 /OUTPUT 16 "outputNum";
+    .port_info 1 /INPUT 16 "inputNum";
+    .port_info 2 /INPUT 16 "maxVal";
+    .port_info 3 /INPUT 16 "minVal";
+    .port_info 4 /INPUT 5 "bitShift";
+v0x619926dbcb30_0 .net *"_ivl_0", 15 0, L_0x619926dd2750;  1 drivers
+v0x619926dbcc30_0 .net *"_ivl_10", 15 0, L_0x619926dd2bb0;  1 drivers
+L_0x70e477c40258 .functor BUFT 1, C4<0000000000000001>, C4<0>, C4<0>, C4<0>;
+v0x619926dbcd10_0 .net/2u *"_ivl_2", 15 0, L_0x70e477c40258;  1 drivers
+v0x619926dbcdd0_0 .net *"_ivl_6", 0 0, L_0x619926dd2a40;  1 drivers
+v0x619926dbce90_0 .net *"_ivl_8", 15 0, L_0x619926dd2ae0;  1 drivers
+v0x619926dbcfc0_0 .net "bitShift", 0 4, L_0x619926dd2570;  alias, 1 drivers
+v0x619926dbd0a0_0 .net "inputNum", 0 15, v0x619926d6c340_0;  alias, 1 drivers
+v0x619926dbd160_0 .net "maxVal", 0 15, L_0x619926dd2350;  alias, 1 drivers
+v0x619926dbd220_0 .net "minVal", 0 15, L_0x619926dd2480;  alias, 1 drivers
+v0x619926dbd300_0 .net "outputNum", 0 15, L_0x619926dd2ca0;  alias, 1 drivers
+v0x619926dbd3f0_0 .net "range_w", 0 15, L_0x619926dd29a0;  1 drivers
+E_0x619926d86f60 .event anyedge, v0x619926dbd220_0, v0x619926dbd160_0, v0x619926dbc5c0_0;
+L_0x619926dd2750 .arith/sub 16, L_0x619926dd2350, L_0x619926dd2480;
+L_0x619926dd29a0 .arith/sum 16, L_0x619926dd2750, L_0x70e477c40258;
+L_0x619926dd2a40 .cmp/ge 16, L_0x619926dd2350, L_0x619926dd2480;
+L_0x619926dd2ae0 .arith/mod 16, v0x619926d6c340_0, L_0x619926dd29a0;
+L_0x619926dd2bb0 .arith/sum 16, L_0x619926dd2480, L_0x619926dd2ae0;
+L_0x619926dd2ca0 .functor MUXZ 16, L_0x619926dd2480, L_0x619926dd2bb0, L_0x619926dd2a40, C4<>;
+S_0x619926dbd580 .scope module, "scalarMux" "minMaxScalarMux_16b" 3 55, 3 202 0, S_0x619926d9c8a0;
+ .timescale -6 -9;
+    .port_info 0 /OUTPUT 16 "maxVal_out";
+    .port_info 1 /OUTPUT 16 "minVal_out";
+    .port_info 2 /OUTPUT 5 "bitShift_out";
+    .port_info 3 /INPUT 16 "maxVal_0";
+    .port_info 4 /INPUT 16 "minVal_0";
+    .port_info 5 /INPUT 16 "maxVal_1";
+    .port_info 6 /INPUT 16 "minVal_1";
+    .port_info 7 /INPUT 5 "bitShift_0";
+    .port_info 8 /INPUT 5 "bitShift_1";
+    .port_info 9 /INPUT 1 "s";
+L_0x70e477c40210 .functor BUFT 1, C4<01010>, C4<0>, C4<0>, C4<0>;
+v0x619926dbd810_0 .net "bitShift_0", 0 4, L_0x70e477c40210;  1 drivers
+v0x619926dbd910_0 .net "bitShift_1", 0 4, o0x70e477c89768;  alias, 0 drivers
+v0x619926dbd9f0_0 .net "bitShift_out", 0 4, L_0x619926dd2570;  alias, 1 drivers
+L_0x70e477c40180 .functor BUFT 1, C4<0000000001000000>, C4<0>, C4<0>, C4<0>;
+v0x619926dbdac0_0 .net "maxVal_0", 0 15, L_0x70e477c40180;  1 drivers
+v0x619926dbdb80_0 .net "maxVal_1", 0 15, o0x70e477c897c8;  alias, 0 drivers
+v0x619926dbdcb0_0 .net "maxVal_out", 0 15, L_0x619926dd2350;  alias, 1 drivers
+L_0x70e477c401c8 .functor BUFT 1, C4<0000000000000000>, C4<0>, C4<0>, C4<0>;
+v0x619926dbdd70_0 .net "minVal_0", 0 15, L_0x70e477c401c8;  1 drivers
+v0x619926dbde30_0 .net "minVal_1", 0 15, o0x70e477c89828;  alias, 0 drivers
+v0x619926dbdf10_0 .net "minVal_out", 0 15, L_0x619926dd2480;  alias, 1 drivers
+v0x619926dbe090_0 .net "s", 0 0, v0x619926dbec90_0;  alias, 1 drivers
+L_0x619926dd2350 .functor MUXZ 16, L_0x70e477c40180, o0x70e477c897c8, v0x619926dbec90_0, C4<>;
+L_0x619926dd2480 .functor MUXZ 16, L_0x70e477c401c8, o0x70e477c89828, v0x619926dbec90_0, C4<>;
+L_0x619926dd2570 .functor MUXZ 5, L_0x70e477c40210, o0x70e477c89768, v0x619926dbec90_0, C4<>;
+S_0x619926dbe2c0 .scope module, "stateControl" "stateController_1b" 3 46, 3 91 0, S_0x619926d9c8a0;
+ .timescale -6 -9;
+    .port_info 0 /OUTPUT 1 "currentState";
+    .port_info 1 /OUTPUT 1 "stateChangedTrigger";
+    .port_info 2 /INPUT 16 "timeInState0";
+    .port_info 3 /INPUT 16 "timeInState1";
+    .port_info 4 /INPUT 1 "clk";
+    .port_info 5 /INPUT 1 "rst";
+L_0x619926d71a40 .functor OR 1, L_0x619926dd1f60, L_0x619926dd2130, C4<0>, C4<0>;
+L_0x70e477c400a8 .functor BUFT 1, C4<0000000000000001>, C4<0>, C4<0>, C4<0>;
+v0x619926dbe5c0_0 .net/2u *"_ivl_0", 15 0, L_0x70e477c400a8;  1 drivers
+L_0x70e477c40138 .functor BUFT 1, C4<0000000000000001>, C4<0>, C4<0>, C4<0>;
+v0x619926dbe6c0_0 .net/2u *"_ivl_10", 15 0, L_0x70e477c40138;  1 drivers
+L_0x70e477c400f0 .functor BUFT 1, C4<0000000000000001>, C4<0>, C4<0>, C4<0>;
+v0x619926dbe7a0_0 .net/2u *"_ivl_4", 15 0, L_0x70e477c400f0;  1 drivers
+v0x619926dbe860_0 .net "beforeIsAtEnd0_w", 0 0, L_0x619926dd2130;  1 drivers
+v0x619926dbe920_0 .net "beforeIsAtEnd1_w", 0 0, L_0x619926dd1f60;  1 drivers
+v0x619926dbea30_0 .net "beforetimeInState1_w", 0 15, L_0x619926dd1a10;  1 drivers
+v0x619926dbeb10_0 .net "beforetotTime_w", 0 15, L_0x619926dd1cc0;  1 drivers
+v0x619926dbebf0_0 .net "clk", 0 0, o0x70e477c89018;  alias, 0 drivers
+v0x619926dbec90_0 .var "currentState", 0 0;
+v0x619926dbedc0_0 .net "isAtEnd0_w", 0 0, L_0x619926dd2090;  1 drivers
+v0x619926dbee60_0 .net "isAtEnd1_w", 0 0, L_0x619926dd1e30;  1 drivers
+v0x619926dbef20_0 .net "rst", 0 0, o0x70e477c89108;  alias, 0 drivers
+v0x619926dbf010_0 .var "stateChangedTrigger", 0 0;
+v0x619926dbf0b0_0 .net "timeInState0", 0 15, o0x70e477c89be8;  alias, 0 drivers
+v0x619926dbf170_0 .net "timeInState1", 0 15, v0x619926dbc760_0;  alias, 1 drivers
+v0x619926dbf230_0 .net "timeInState1_w", 0 15, L_0x619926dd18f0;  1 drivers
+v0x619926dbf2f0_0 .var "time_16b", 0 15;
+v0x619926dbf3d0_0 .net "totTime_w", 0 15, L_0x619926dd1b80;  1 drivers
+v0x619926dbf4b0_0 .net "triggerEvent", 0 0, L_0x619926d71a40;  1 drivers
+E_0x619926dbe540 .event posedge, v0x619926dbedc0_0, v0x619926dbbf00_0, v0x619926d71ba0_0;
+L_0x619926dd18f0 .arith/sub 16, v0x619926dbc760_0, L_0x70e477c400a8;
+L_0x619926dd1a10 .arith/sub 16, L_0x619926dd18f0, L_0x70e477c400f0;
+L_0x619926dd1b80 .arith/sum 16, L_0x619926dd18f0, o0x70e477c89be8;
+L_0x619926dd1cc0 .arith/sub 16, L_0x619926dd1b80, L_0x70e477c40138;
+L_0x619926dd1e30 .cmp/eq 16, v0x619926dbf2f0_0, L_0x619926dd18f0;
+L_0x619926dd1f60 .cmp/eq 16, v0x619926dbf2f0_0, L_0x619926dd1a10;
+L_0x619926dd2090 .cmp/eq 16, v0x619926dbf2f0_0, L_0x619926dd1b80;
+L_0x619926dd2130 .cmp/eq 16, v0x619926dbf2f0_0, L_0x619926dd1cc0;
+S_0x619926d6e050 .scope module, "tmp_scale_mod_tb" "tmp_scale_mod_tb" 4 2;
+ .timescale -9 -12;
+v0x619926dc1380_0 .var/i "i", 31 0;
+v0x619926dc1480_0 .var "in", 0 15;
+v0x619926dc1540_0 .var "maxv", 0 15;
+v0x619926dc15e0_0 .var "minv", 0 15;
+v0x619926dc16b0_0 .net "out", 0 15, L_0x619926dd34d0;  1 drivers
+v0x619926dc1750_0 .var "sh", 0 4;
+S_0x619926dc0720 .scope module, "dut" "scaleToMinMaxRange_16b" 4 9, 3 221 0, S_0x619926d6e050;
+ .timescale -6 -9;
+    .port_info 0 /OUTPUT 16 "outputNum";
+    .port_info 1 /INPUT 16 "inputNum";
+    .port_info 2 /INPUT 16 "maxVal";
+    .port_info 3 /INPUT 16 "minVal";
+    .port_info 4 /INPUT 5 "bitShift";
+v0x619926dc0910_0 .net *"_ivl_0", 15 0, L_0x619926dd2f10;  1 drivers
+v0x619926dc0a10_0 .net *"_ivl_10", 15 0, L_0x619926dd33a0;  1 drivers
+L_0x70e477c402a0 .functor BUFT 1, C4<0000000000000001>, C4<0>, C4<0>, C4<0>;
+v0x619926dc0af0_0 .net/2u *"_ivl_2", 15 0, L_0x70e477c402a0;  1 drivers
+v0x619926dc0bb0_0 .net *"_ivl_6", 0 0, L_0x619926dd3190;  1 drivers
+v0x619926dc0c70_0 .net *"_ivl_8", 15 0, L_0x619926dd3230;  1 drivers
+v0x619926dc0da0_0 .net "bitShift", 0 4, v0x619926dc1750_0;  1 drivers
+v0x619926dc0e80_0 .net "inputNum", 0 15, v0x619926dc1480_0;  1 drivers
+v0x619926dc0f60_0 .net "maxVal", 0 15, v0x619926dc1540_0;  1 drivers
+v0x619926dc1040_0 .net "minVal", 0 15, v0x619926dc15e0_0;  1 drivers
+v0x619926dc1120_0 .net "outputNum", 0 15, L_0x619926dd34d0;  alias, 1 drivers
+v0x619926dc1200_0 .net "range_w", 0 15, L_0x619926dd3050;  1 drivers
+E_0x619926d5f740 .event anyedge, v0x619926dc1040_0, v0x619926dc0f60_0, v0x619926dc1120_0;
+L_0x619926dd2f10 .arith/sub 16, v0x619926dc1540_0, v0x619926dc15e0_0;
+L_0x619926dd3050 .arith/sum 16, L_0x619926dd2f10, L_0x70e477c402a0;
+L_0x619926dd3190 .cmp/ge 16, v0x619926dc1540_0, v0x619926dc15e0_0;
+L_0x619926dd3230 .arith/mod 16, v0x619926dc1480_0, L_0x619926dd3050;
+L_0x619926dd33a0 .arith/sum 16, v0x619926dc15e0_0, L_0x619926dd3230;
+L_0x619926dd34d0 .functor MUXZ 16, v0x619926dc15e0_0, L_0x619926dd33a0, L_0x619926dd3190, C4<>;
+    .scope S_0x619926d6d830;
+T_0 ;
+    %wait E_0x619926d873d0;
+    %load/vec4 v0x619926dbbf00_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.0, 8;
+    %load/vec4 v0x619926dbbfc0_0;
+    %assign/vec4 v0x619926d6c340_0, 0;
+    %jmp T_0.1;
+T_0.0 ;
+    %load/vec4 v0x619926dbc0a0_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.2, 8;
+    %load/vec4 v0x619926dbbdd0_0;
+    %load/vec4 v0x619926d6c240_0;
+    %mul;
+    %load/vec4 v0x619926d71c70_0;
+    %add;
+    %assign/vec4 v0x619926d6c340_0, 0;
+T_0.2 ;
+T_0.1 ;
+    %jmp T_0;
+    .thread T_0;
+    .scope S_0x619926d6d830;
+T_1 ;
+    %wait E_0x619926d873d0;
+    %load/vec4 v0x619926dbbf00_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_1.0, 8;
+    %load/vec4 v0x619926dbbfc0_0;
+    %assign/vec4 v0x619926dbbdd0_0, 0;
+    %jmp T_1.1;
+T_1.0 ;
+    %load/vec4 v0x619926d6c340_0;
+    %assign/vec4 v0x619926dbbdd0_0, 0;
+T_1.1 ;
+    %jmp T_1;
+    .thread T_1;
+    .scope S_0x619926dbe2c0;
+T_2 ;
+    %wait E_0x619926dbe540;
+    %load/vec4 v0x619926dbef20_0;
+    %flag_set/vec4 8;
+    %jmp/1 T_2.2, 8;
+    %load/vec4 v0x619926dbedc0_0;
+    %flag_set/vec4 9;
+    %flag_or 8, 9;
+T_2.2;
+    %jmp/0xz  T_2.0, 8;
+    %pushi/vec4 0, 0, 16;
+    %assign/vec4 v0x619926dbf2f0_0, 0;
+    %pushi/vec4 1, 0, 1;
+    %assign/vec4 v0x619926dbec90_0, 0;
+    %jmp T_2.1;
+T_2.0 ;
+    %load/vec4 v0x619926dbf2f0_0;
+    %addi 1, 0, 16;
+    %assign/vec4 v0x619926dbf2f0_0, 0;
+    %load/vec4 v0x619926dbee60_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_2.3, 8;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x619926dbec90_0, 0;
+T_2.3 ;
+T_2.1 ;
+    %jmp T_2;
+    .thread T_2;
+    .scope S_0x619926dbe2c0;
+T_3 ;
+    %wait E_0x619926d873d0;
+    %load/vec4 v0x619926dbef20_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_3.0, 8;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x619926dbf010_0, 0;
+    %jmp T_3.1;
+T_3.0 ;
+    %load/vec4 v0x619926dbf4b0_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_3.2, 8;
+    %pushi/vec4 1, 0, 1;
+    %assign/vec4 v0x619926dbf010_0, 0;
+    %jmp T_3.3;
+T_3.2 ;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x619926dbf010_0, 0;
+T_3.3 ;
+T_3.1 ;
+    %jmp T_3;
+    .thread T_3;
+    .scope S_0x619926dbc930;
+T_4 ;
+    %wait E_0x619926d86f60;
+    %load/vec4 v0x619926dbd160_0;
+    %load/vec4 v0x619926dbd220_0;
+    %cmp/u;
+    %flag_or 5, 4;
+    %jmp/0xz  T_4.0, 5;
+    %vpi_call/w 3 232 "$display", "scaleToMinMaxRange_16b ERROR: minVal >= maxVal: minVal = %d; maxVal = %d", v0x619926dbd160_0, v0x619926dbd220_0 {0 0 0};
+T_4.0 ;
+    %load/vec4 v0x619926dbd300_0;
+    %load/vec4 v0x619926dbd220_0;
+    %cmp/u;
+    %jmp/1 T_4.4, 5;
+    %flag_mov 8, 5;
+    %load/vec4 v0x619926dbd160_0;
+    %load/vec4 v0x619926dbd300_0;
+    %cmp/u;
+    %flag_or 5, 8;
+T_4.4;
+    %jmp/0xz  T_4.2, 5;
+    %vpi_call/w 3 236 "$display", "scaleToMinMaxRange_16b ERROR: output not in range: output = %d,  minVal = %d; maxVal = %d", v0x619926dbd300_0, v0x619926dbd160_0, v0x619926dbd220_0 {0 0 0};
+T_4.2 ;
+    %jmp T_4;
+    .thread T_4, $push;
+    .scope S_0x619926dbc240;
+T_5 ;
+    %wait E_0x619926d87690;
+    %load/vec4 v0x619926dbc460_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_5.0, 8;
+    %pushi/vec4 0, 0, 16;
+    %store/vec4 v0x619926dbc680_0, 0, 16;
+    %pushi/vec4 65535, 0, 16;
+    %store/vec4 v0x619926dbc760_0, 0, 16;
+    %jmp T_5.1;
+T_5.0 ;
+    %load/vec4 v0x619926dbc520_0;
+    %dup/vec4;
+    %pushi/vec4 0, 0, 1;
+    %cmp/u;
+    %jmp/1 T_5.2, 6;
+    %dup/vec4;
+    %pushi/vec4 1, 0, 1;
+    %cmp/u;
+    %jmp/1 T_5.3, 6;
+    %jmp T_5.4;
+T_5.2 ;
+    %load/vec4 v0x619926dbc5c0_0;
+    %store/vec4 v0x619926dbc680_0, 0, 16;
+    %jmp T_5.4;
+T_5.3 ;
+    %load/vec4 v0x619926dbc5c0_0;
+    %store/vec4 v0x619926dbc760_0, 0, 16;
+    %jmp T_5.4;
+T_5.4 ;
+    %pop/vec4 1;
+T_5.1 ;
+    %jmp T_5;
+    .thread T_5, $push;
+    .scope S_0x619926d9c8a0;
+T_6 ;
+    %wait E_0x619926d878e0;
+    %load/vec4 v0x619926dbfb40_0;
+    %load/vec4 v0x619926dbfe30_0;
+    %cmp/u;
+    %jmp/1 T_6.2, 5;
+    %flag_mov 8, 5;
+    %load/vec4 v0x619926dbfe30_0;
+    %load/vec4 v0x619926dbfcd0_0;
+    %cmp/u;
+    %flag_or 5, 8;
+T_6.2;
+    %jmp/0xz  T_6.0, 5;
+    %vpi_call/w 3 32 "$display", "ERROR: randDelayTime_w outside of %d-%d range: randDelayTime_w = %d", v0x619926dbfcd0_0, v0x619926dbfb40_0, v0x619926dbfe30_0 {0 0 0};
+T_6.0 ;
+    %jmp T_6;
+    .thread T_6, $push;
+    .scope S_0x619926dc0720;
+T_7 ;
+    %wait E_0x619926d5f740;
+    %load/vec4 v0x619926dc0f60_0;
+    %load/vec4 v0x619926dc1040_0;
+    %cmp/u;
+    %flag_or 5, 4;
+    %jmp/0xz  T_7.0, 5;
+    %vpi_call/w 3 232 "$display", "scaleToMinMaxRange_16b ERROR: minVal >= maxVal: minVal = %d; maxVal = %d", v0x619926dc0f60_0, v0x619926dc1040_0 {0 0 0};
+T_7.0 ;
+    %load/vec4 v0x619926dc1120_0;
+    %load/vec4 v0x619926dc1040_0;
+    %cmp/u;
+    %jmp/1 T_7.4, 5;
+    %flag_mov 8, 5;
+    %load/vec4 v0x619926dc0f60_0;
+    %load/vec4 v0x619926dc1120_0;
+    %cmp/u;
+    %flag_or 5, 8;
+T_7.4;
+    %jmp/0xz  T_7.2, 5;
+    %vpi_call/w 3 236 "$display", "scaleToMinMaxRange_16b ERROR: output not in range: output = %d,  minVal = %d; maxVal = %d", v0x619926dc1120_0, v0x619926dc0f60_0, v0x619926dc1040_0 {0 0 0};
+T_7.2 ;
+    %jmp T_7;
+    .thread T_7, $push;
+    .scope S_0x619926d6e050;
+T_8 ;
+    %pushi/vec4 7, 0, 16;
+    %store/vec4 v0x619926dc15e0_0, 0, 16;
+    %pushi/vec4 20, 0, 16;
+    %store/vec4 v0x619926dc1540_0, 0, 16;
+    %pushi/vec4 0, 0, 5;
+    %store/vec4 v0x619926dc1750_0, 0, 5;
+    %pushi/vec4 0, 0, 32;
+    %store/vec4 v0x619926dc1380_0, 0, 32;
+T_8.0 ;
+    %load/vec4 v0x619926dc1380_0;
+    %cmpi/s 100, 0, 32;
+    %jmp/0xz T_8.1, 5;
+    %load/vec4 v0x619926dc1380_0;
+    %pad/s 16;
+    %store/vec4 v0x619926dc1480_0, 0, 16;
+    %delay 1000, 0;
+    %load/vec4 v0x619926dc16b0_0;
+    %load/vec4 v0x619926dc15e0_0;
+    %cmp/u;
+    %jmp/1 T_8.4, 5;
+    %flag_mov 8, 5;
+    %load/vec4 v0x619926dc1540_0;
+    %load/vec4 v0x619926dc16b0_0;
+    %cmp/u;
+    %flag_or 5, 8;
+T_8.4;
+    %jmp/0xz  T_8.2, 5;
+    %vpi_call/w 4 26 "$display", "FAIL i=%0d out=%0d min=%0d max=%0d", v0x619926dc1380_0, v0x619926dc16b0_0, v0x619926dc15e0_0, v0x619926dc1540_0 {0 0 0};
+    %vpi_call/w 4 27 "$finish" {0 0 0};
+T_8.2 ;
+    %load/vec4 v0x619926dc1380_0;
+    %addi 1, 0, 32;
+    %store/vec4 v0x619926dc1380_0, 0, 32;
+    %jmp T_8.0;
+T_8.1 ;
+    %vpi_call/w 4 30 "$display", "PASS modulo scaler range test" {0 0 0};
+    %vpi_call/w 4 31 "$finish" {0 0 0};
+    %end;
+    .thread T_8;
+# The file index is used to find the file name in the following table.
+:file_names 5;
+    "N/A";
+    "<interactive>";
+    "-";
+    "pseudoRandDecoderController_6b.v";
+    "testbenches/tmp_scale_mod_tb.v";

@@ -55,11 +55,11 @@ module perimeter (
     wire rst;
     wire [0:15] seed_w;
 
-    localparam [0:15] maxVal_delay     = 16'd20000;    // 20000 clock cycles = 20 seconds when running on 1kHz clock
-    localparam [0:15] minVal_delay     = 16'd7000;     // 7000 clock cycles = 7 seconds when running on 1kHz clock
-    localparam [0:4] bitShift_delay    = 5'd3;
-    localparam [0:15] ledflashTime     = 16'd1000;     // 1000 clock cycles = 1 second when running on 1kHz clock
-    localparam [0:13] max_true_time    = 14'd5000 + ledflashTime[0:13];     // 5000 clock cycles = 5 seconds when running on 1kHz clock
+    localparam [0:15] maxVal_delay     = 16'd200;    // 200 clock cycles at 1kHz = 200ms
+    localparam [0:15] minVal_delay     = 16'd70;     // 70 clock cycles at 1kHz = 70ms
+    localparam [0:4] bitShift_delay    = 5'd0;       // unused by modulo scaler; retained for interface compatibility
+    localparam [0:15] ledflashTime     = 16'd10;     // 10 clock cycles at 1kHz = 10ms
+    localparam [0:13] max_true_time    = 14'd50 + ledflashTime[0:13];     // click window after flash: 50 + ledflashTime cycles
 
 
     clkDivBy16384 clk_div_inst (
