@@ -18,7 +18,6 @@ module pseudoRandDecoderController_6b(
     maxVal_w,
     randNum_w,
     to64bitEncoder_w;
-    wire [0:4] bitShift_w;
 
     localparam multiplier   = 16'd25173,
     increment               = 16'd13849,
@@ -52,25 +51,16 @@ module pseudoRandDecoderController_6b(
         .rst(rst)
     );
 
-    minMaxScalarMux_16b scalarMux(
-        .maxVal_out(maxVal_w),
-        .minVal_out(minVal_w),
-        .bitShift_out(bitShift_w),
-        .maxVal_0(maxVal_num),
-        .minVal_0(minVal_num),
-        .bitShift_0(bitShift_num),
-        .maxVal_1(maxVal_delay),
-        .minVal_1(minVal_delay),
-        .bitShift_1(bitShift_delay),
-        .s(state_w)
-    );
+    // Direct assign for modulo scaling (no mux needed)
+    assign maxVal_w = (state_w == 0) ? maxVal_num : maxVal_delay;
+    assign minVal_w = (state_w == 0) ? minVal_num : minVal_delay;
 
     scaleToMinMaxRange_16b scalarModule(
         .outputNum(scalarModule_demux_w),
         .inputNum(randNum_w),
         .maxVal(maxVal_w),
         .minVal(minVal_w),
-        .bitShift(bitShift_w)
+        .bitShift(5'd0)
     );
 
     demux_16b numDemux(
@@ -199,23 +189,7 @@ module demux_16b(
 
 endmodule
 
-module minMaxScalarMux_16b(
-    output [0:15] maxVal_out,
-    output [0:15] minVal_out,
-    output [0:4] bitShift_out,
-    input [0:15] maxVal_0,
-    input [0:15] minVal_0,
-    input [0:15] maxVal_1,
-    input [0:15] minVal_1,
-    input [0:4] bitShift_0,
-    input [0:4] bitShift_1,
-    input s
-);
-    assign maxVal_out = s ? maxVal_1 : maxVal_0;
-    assign minVal_out = s ? minVal_1 : minVal_0;
-    assign bitShift_out = s ? bitShift_1 : bitShift_0;
 
-endmodule
 
 // realize: this module can (at maximum) scale numbers between
 module scaleToMinMaxRange_16b(
