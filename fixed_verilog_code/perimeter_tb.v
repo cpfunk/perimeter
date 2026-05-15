@@ -58,13 +58,16 @@ module perimeter_tb;
     wire clk_1kHz_div;
     wire rand_led_enable;
     wire [0:15] randDelayTime;
+    wire clkDiv;
 
     wire true_click_detect_active;
+    wire state;
+    wire [0:15] rand_num;
 
-    integer max_between_press_interval = 100; //FIXME
-    integer max_button_press_time = 10; // clock cycles
+    integer max_between_press_interval = 1000; //FIXME
+    integer max_button_press_time = 100; // clock cycles
 
-    integer clockfreq = 10_000_000;
+    integer clockfreq = 16_000_000;
     integer s_to_ns = 1_000_000_000;
     integer half_clk_cycle;
 
@@ -122,8 +125,8 @@ module perimeter_tb;
     );
 
     perimeter uut (
-        .clk_16MHz(0),
-        .clk_1kHz_ext(clk_1kHz_ext),
+        .clk_16MHz(clk),
+        .clk_100Hz_ext(clk_1kHz_ext),
         .clk_mux_s(clk_mux_s),
         ._start_test(_start_test),
         ._clicker(_clicker),
@@ -144,7 +147,7 @@ module perimeter_tb;
         counter                 = 0;
         clk               = 0;
         // clk_1kHz_ext            = // simulation would run too slow with 1kHz clock
-        clk_mux_s               = 1; // bypass clock divider by setting clock mux to 1
+        clk_mux_s               = 0;
         _start_test             = 1'b0;
         _clicker                = 1;
         true_false_sel_switch   = 0;
@@ -152,7 +155,7 @@ module perimeter_tb;
         initial_true_clicks     = 0;
         test_counter            = 0;
         end_test_3              = 3'b0;
-        test_counter_at_true    = ($random) % (16'd50);
+        test_counter_at_true    = ($random) % (16'd500);
 
         maxVal_delay = uut.maxVal_delay;
         minVal_delay = uut.minVal_delay;
@@ -163,15 +166,18 @@ module perimeter_tb;
     end
 
     assign clk_1kHz_ext = clk; // run on faster clock for testbenching purposes
-    assign true_click_detect_active = uut.comparator_inst.true_click_detect_active;
+    assign true_click_detect_active = uut.comparator_inst.en_negedge || uut.comparator_inst.true_click_detect_active && !uut.comparator_inst.true_time_timeout && !uut.comparator_inst.true_click_count_changed; // expose this signal for testing purposes; this is the signal that enables counting of true clicks and should be high whenever the counter is counting and accepting true clicks
     assign false_clicks = uut.false_clicks;
     assign true_clicks = uut.true_clicks;
-    assign clk_1kHz_div = uut.clk_1kHz_div;
     assign rand_led_enable = uut.rand_led_enable;
     assign randDelayTime = uut.rand_controller_inst.randDelayTime_w;
-
+    assign state = uut.rand_controller_inst.state_w;
+    assign rand_num = uut.rand_controller_inst.randNum_w;
+    assign clkDiv = uut.clk_100Hz;
     // triggering of synchronous testbench signals
     always #(half_clk_cycle) clk = ~clk;
+
+    //always #(1_000_000) clk_mux_s = ~clk_mux_s;
 
     displayStartTest dt1 (.test(1), .display(d1));
     displayStartTest dt2 (.test(2), .display(d2));
@@ -194,7 +200,7 @@ module perimeter_tb;
                     test_counter <= test_counter + 1;
                 end
                 
-                if (test_counter >= ($random) % (16'd50) && ~true_click_detect_active) begin
+                if (test_counter >= ($random) % (16'd500) && ~true_click_detect_active) begin
                     _clicker <= 0;
                 end
                 else if (false_clicks == initial_false_clicks + 1 && initial_true_clicks == true_clicks && true_click_detect_active) begin
@@ -223,17 +229,17 @@ module perimeter_tb;
                     test_counter <= test_counter + 1;
                 end
                 
-                if (test_counter >= ($random) % (16'd50) && true_click_detect_active) begin
+                if (test_counter >= ($random) % (16'd500) && true_click_detect_active) begin
                     _clicker <= 0;
                 end
-                else if (false_clicks == initial_false_clicks && initial_true_clicks + 1 == true_clicks && test_counter >= 16'd100) begin
+                else if (false_clicks == initial_false_clicks && initial_true_clicks + 1 == true_clicks && test_counter >= 16'd1000) begin
                     $display("Test #2 passed");
                     //advance testcase
                     testcase <= 3;
                     test_counter <= 0;
                     _clicker <= 1;
                 end
-                else if (test_counter >= 16'd100) begin
+                else if (test_counter >= 16'd1000) begin
                     $display("Test #2 failed");
                     $stop;
                 end
@@ -251,7 +257,7 @@ module perimeter_tb;
                     test_counter <= test_counter + 1;
                 end
 
-                if (test_counter >= test_counter_at_true % 16'd25 && true_click_detect_active) begin
+                if (test_counter >= test_counter_at_true % 16'd250 && true_click_detect_active) begin
                     _clicker <= 0;
                 end
                 else if (~_clicker) begin

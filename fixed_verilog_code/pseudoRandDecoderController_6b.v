@@ -5,9 +5,9 @@ module pseudoRandDecoderController_6b(
     output _enOut,
     input clk,
     input [0:15] seed,
-    maxVal_delay,
-    minVal_delay,
-    ledflashTime,
+    input [0:15] maxVal_delay,
+    input [0:15] minVal_delay,
+    input [0:15] ledflashTime,
     input rst
 );
     wire trigger_w, state_w;
@@ -22,13 +22,6 @@ module pseudoRandDecoderController_6b(
     increment               = 16'd13849,
     maxVal_num              = 16'd64,
     minVal_num              = 16'd0;
-
-    // for debugging purposes: Note: will assert initially since the output of the demux is ~16'h0
-    always @(*) begin
-        if (randDelayTime_w > maxVal_delay || minVal_num > randDelayTime_w) begin
-            $display("ERROR: randDelayTime_w outside of %d-%d range: randDelayTime_w = %d", minVal_delay, maxVal_delay, randDelayTime_w);
-        end
-    end
 
     genNextRand_16b genNextRand(
         .randNum(randNum_w),
@@ -71,6 +64,7 @@ module pseudoRandDecoderController_6b(
         .y_1(randDelayTime_w),
         .x(scalarModule_demux_w),
         .s(state_w),
+        .clk(clk),
         .rst(rst)
     );
 
@@ -98,6 +92,7 @@ module stateController_1b(
     beforeIsAtEnd0_w,
     isAtEnd1_w,
     beforeIsAtEnd1_w;
+    wire triggerEvent;
 
     assign timeInState1_w = timeInState1 - 1;
     assign beforetimeInState1_w = timeInState1_w - 1;
@@ -109,13 +104,20 @@ module stateController_1b(
     assign beforeIsAtEnd0_w = (time_16b == beforetotTime_w);
     assign triggerEvent = (beforeIsAtEnd1_w || beforeIsAtEnd0_w);
 
-    always @(posedge clk or posedge rst or posedge isAtEnd0_w) begin
-        if (rst || isAtEnd0_w) begin
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
             time_16b <= 0;
 
             // begin in state 1 on reset
             currentState <= 1;
-        end else begin
+        end
+        else if (isAtEnd0_w) begin
+            time_16b <= 0;
+
+            // begin in state 1 on reset
+            currentState <= 1;
+        end
+        else begin
             time_16b <= time_16b + 1;
 
             if (isAtEnd1_w) begin
@@ -170,25 +172,31 @@ module genNextRand_16b(
 endmodule
 
 module demux_16b(
-    output reg [0:15] y_0,
-    output reg [0:15] y_1,
-    input [0:15]      x,
-    input             s,
-    input             rst
+    output [0:15] y_0,
+    output [0:15] y_1,
+    input [0:15]  x,
+    input         s,
+    input         clk,
+    input         rst
 );
-    // output should hold its previous value if not selected
-    always @(*) begin
+    reg [0:15] y_0_prev;
+    reg [0:15] y_1_prev;
+
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
-            y_0 = 0;
-            y_1 = ~16'h0;
+            y_0_prev <= ~16'h0;
+            y_1_prev <= ~16'h0;
         end
         else begin
-            case(s)
-                0: y_0 = x;
-                1: y_1 = x;
-            endcase
+            y_0_prev <= y_0;
+            y_1_prev <= y_1;
         end
     end
+    
+    // demux logic with synchronous reset; when not selected, outputs hold their previous value
+    // output should hold its previous value if not selected
+    assign y_0 = s ? y_0_prev : x;
+    assign y_1 = s ? x : y_1_prev;
 
 endmodule
 
@@ -213,17 +221,6 @@ module scaleToMinMaxRange_16b(
     input [0:15] maxVal, 
     input [0:15] minVal
 );
-    // for debugging purposes
-    always @(*) begin
-        if (minVal >= maxVal) begin
-            $display("scaleToMinMaxRange_16b ERROR: minVal >= maxVal: minVal = %d; maxVal = %d", maxVal, minVal);
-        end
-
-        if(minVal > outputNum &&  outputNum > maxVal) begin
-            $display("scaleToMinMaxRange_16b ERROR: output not in range: output = %d,  minVal = %d; maxVal = %d", outputNum, maxVal, minVal);
-        end
-    end
-
     assign outputNum = inputNum % (maxVal - minVal + 1) + minVal;
 
 endmodule

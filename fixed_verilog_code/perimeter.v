@@ -2,7 +2,7 @@
 
 module perimeter (
     input             clk_16MHz,
-    input             clk_1kHz_ext,
+    input             clk_100Hz_ext,
     input             clk_mux_s,
     input             _clicker,
     input             true_false_display_sel_switch,
@@ -46,8 +46,8 @@ module perimeter (
     wire [0:3] hundreds;
     wire [0:3] tens;
     wire [0:3] ones;
-    wire       clk_1kHz;
-    wire       clk_1kHz_div;
+    wire       clk_100Hz;
+    wire       clk_100Hz_div;
     wire       comparator_true_hit;
     wire       comparator_false_hit;
     wire [5:0] rand_led_index;
@@ -55,30 +55,31 @@ module perimeter (
     wire rst;
     wire [0:15] seed_w;
 
-    localparam [0:15] maxVal_delay     = 16'd200;    // 200 clock cycles
-    localparam [0:15] minVal_delay     = 16'd70;     // 70 clock cycles
-    localparam [0:15] ledflashTime     = 16'd10;     // 10 clock cycles
-    localparam [0:13] max_true_time    = 14'd50 + ledflashTime[0:13]; // 50 clock cycles
+    assign clk_div = clk_100Hz_div; //FIXME
 
-
-    clkDivBy16384 clk_div_inst (
-        .clk_1kHz(clk_1kHz_div),
-        .clk_16MHz(clk_16MHz),
-        .rst(rst)
-    );
+    localparam [0:15] maxVal_delay     = 16'd2000;    // 2000 clock cycles
+    localparam [0:15] minVal_delay     = 16'd700;     // 700 clock cycles
+    localparam [0:15] ledflashTime     = 16'd100;     // 100 clock cycles
+    localparam [0:13] max_true_time    = 14'd500 + ledflashTime; // 600 clock cycles
 
     //clock mux
-    assign clk_1kHz = (clk_mux_s) ? clk_1kHz_ext : clk_1kHz_div;
+    assign clk_100Hz = (clk_mux_s) ? clk_100Hz_ext : clk_100Hz_div;
 
     assign seed_w = (seed_mux_s) ? seed : 16'd40267;
 
     //assign reset signal to _start_test signal
     assign rst = ~_start_test;
+
+    clkDivBy160_000 clk_div_160k_inst (
+        .clk_100Hz(clk_100Hz_div),
+        .clk_16MHz(clk_16MHz),
+        .rst(rst)
+    );
     
     pseudoRandDecoderController_6b rand_controller_inst (
         .randOut(rand_led_index),
         ._enOut(rand_led_enable),
-        .clk(clk_1kHz),
+        .clk(clk_100Hz),
         .seed(seed_w),
         .maxVal_delay(maxVal_delay),
         .minVal_delay(minVal_delay),
@@ -93,7 +94,7 @@ module perimeter (
     );
 
     clickComparatorAndTrueFalseCounter comparator_inst (
-        .clk(clk_1kHz),
+        .clk(clk_100Hz),
         ._clicker(_clicker),   // button is normally high -> goes low when pressed
         ._en(rand_led_enable),    // led flash singal from random decoder controller
         .rst(rst),
@@ -161,4 +162,5 @@ module perimeter (
         .number(ones)
     );
 
-endmodule
+endmodule`timescale 1us / 1ns
+
